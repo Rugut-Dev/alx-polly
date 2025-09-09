@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { 
@@ -17,9 +16,10 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
+import { useAuth } from "@/hooks/use-auth"
 
 export function Navigation() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false) // TODO: Get from auth context
+  const { user, signOut } = useAuth()
 
   return (
     <nav className="border-b bg-white">
@@ -51,17 +51,21 @@ export function Navigation() {
           </NavigationMenu>
 
           <div className="flex items-center space-x-4">
-            {isAuthenticated ? (
+            {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline">Profile</Button>
+                  <Button variant="outline">
+                    {user.user_metadata?.full_name || user.email}
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
                     <Link href="/auth/profile">Profile Settings</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>My Polls</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setIsAuthenticated(false)}>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard">Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={signOut}>
                     Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
